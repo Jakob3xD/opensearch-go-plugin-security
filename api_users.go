@@ -23,21 +23,15 @@ package security
 
 import (
 	"context"
-
-	"github.com/jakob3xd/opensearch-golang"
 )
 
 type usersClient struct {
-	client *opensearch.Client
-}
-
-func newUsersClient(client *opensearch.Client) usersClient {
-	return usersClient{client: client}
+	securityClient *Client
 }
 
 func (c usersClient) Get(ctx context.Context, req *UsersGetReq) (*UsersGetResp, error) {
 	users := make(UsersGetResp)
-	_, err := c.client.Do(ctx, req, &users)
+	_, err := c.securityClient.do(ctx, req, &users)
 	if err != nil {
 		return nil, err
 	}
