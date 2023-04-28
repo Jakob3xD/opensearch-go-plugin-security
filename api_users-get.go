@@ -37,7 +37,7 @@ func (r UsersGetReq) GetMethod() string {
 }
 
 func (r UsersGetReq) GetPath() string {
-	return fmt.Sprintf("%s%s", "/_plugins/_security/api/internalusers/", r.User)
+	return fmt.Sprintf("%s%s%s", basePath, "api/internalusers/", r.User)
 }
 
 func (r UsersGetReq) GetBody() (io.Reader, error) {

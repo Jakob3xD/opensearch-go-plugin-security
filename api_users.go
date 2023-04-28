@@ -25,6 +25,8 @@ import (
 	"context"
 )
 
+const basePath = "/_plugins/_security/"
+
 type usersClient struct {
 	securityClient *Client
 }
