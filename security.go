@@ -22,6 +22,10 @@
 package security
 
 import (
+	"context"
+	"crypto/tls"
+	"net/http"
+
 	"github.com/jakob3xd/opensearch-golang"
 )
 
@@ -52,9 +56,30 @@ func NewClient(config Config) (*Client, error) {
 
 // NewDefaultClient returns a secure client using defauls
 func NewDefaultClient() (*Client, error) {
-	rootClient, err := opensearch.NewDefaultClient()
+	rootClient, err := opensearch.NewClient(opensearch.Config{
+		Username:  "admin",
+		Password:  "admin",
+		Addresses: []string{"https://localhost:9200"},
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	})
 	if err != nil {
 		return nil, err
 	}
 	return clientInit(rootClient), nil
+}
+
+func (c *Client) Do(ctx context.Context, req opensearch.Request) (*Response, error) {
+	resp, err := c.client.Do(ctx, req, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	response := Response{
+		statusCode: resp.StatusCode,
+		body:       resp.Body,
+		header:     resp.Header,
+	}
+	return &response, nil
 }

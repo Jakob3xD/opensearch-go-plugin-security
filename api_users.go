@@ -35,16 +35,16 @@ func newUsersClient(client *opensearch.Client) usersClient {
 	return usersClient{client: client}
 }
 
-func (c usersClient) Get(ctx context.Context, req UsersGetReq) (*UsersGetResp, error) {
-	_, err := c.client.Do(ctx, req, nil)
+func (c usersClient) Get(ctx context.Context, req *UsersGetReq) (*UsersGetResp, error) {
+	users := make(UsersGetResp)
+	_, err := c.client.Do(ctx, req, &users)
 	if err != nil {
 		return nil, err
 	}
-	return nil, nil
+	return &users, nil
 }
 
 /*
-
 
 type UsersDelete struct {
 	User string
@@ -73,100 +73,4 @@ type UsersPatchBody struct {
 
 type UsersPatchBodyValue any
 
-func (u UsersGet) Do(ctx context.Context, transport Transport) (*UsersGetResp, error) {
-	var (
-		path   strings.Builder
-		params map[string]string
-
-		data PointInTimeCreateResp
-	)
-	method := "POST"
-
-	if req == nil {
-		return nil, nil, ErrRequestNilPointer
-	}
-
-	path.Grow(1 + len(strings.Join(req.Index, ",")) + len("/_search/point_in_time"))
-	path.WriteString("/")
-	path.WriteString(strings.Join(req.Index, ","))
-	path.WriteString("/_search/point_in_time")
-
-	params = req.Params.get()
-
-	response, err := performRequest(ctx, client.transport, method, path.String(), nil, params, req.Header)
-
-	if err = response.Err(); err != nil {
-		return response, nil, err
-	}
-
-	if len(req.Params.FilterPath) != 0 {
-		return response, nil, nil
-	}
-
-	if err := json.NewDecoder(response.Body).Decode(&data); err != nil {
-		return response, nil, err
-	}
-	return response, &data, nil
-}
-
-func (u UsersDelete) Do(ctx context.Context, transport Transport) error {
-	var (
-		method string
-		path   strings.Builder
-	)
-	method = "DELETE"
-	path.Grow(len("/_plugins/_security/api/internalusers/") + len(u.User))
-	path.WriteString("/_plugins/_security/api/internalusers/")
-	path.WriteString(u.User)
-
-	req, err := newRequest(method, path.String(), nil)
-	if err != nil {
-		return err
-	}
-
-	if ctx != nil {
-		req = req.WithContext(ctx)
-	}
-	resp, err := transport.Perform(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	return errorCheck(resp, []int{200, 404})
-}
-
-func (u UsersCreate) Do(ctx context.Context, transport Transport) error {
-	var (
-		method string
-		path   strings.Builder
-	)
-	method = "PUT"
-	path.Grow(len("/_plugins/_security/api/internalusers/") + len(u.User))
-	path.WriteString("/_plugins/_security/api/internalusers/")
-	path.WriteString(u.User)
-	body, err := json.Marshal(u.Body)
-	if err != nil {
-		return err
-	}
-
-	req, err := newRequest(method, path.String(), bytes.NewBuffer(body))
-	if err != nil {
-		return err
-	}
-	if u.Body != nil {
-		req.Header[headerContentType] = headerContentTypeJSON
-	}
-
-	if ctx != nil {
-		req = req.WithContext(ctx)
-	}
-	resp, err := transport.Perform(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	return errorCheck(resp, []int{200, 201, 404})
-}
 */
