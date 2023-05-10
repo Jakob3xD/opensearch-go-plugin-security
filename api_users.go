@@ -32,19 +32,25 @@ type usersClient struct {
 }
 
 func (c usersClient) Get(ctx context.Context, req *UsersGetReq) (*UsersGetResp, error) {
-	users := make(UsersGetResp)
-	_, err := c.securityClient.do(ctx, req, &users)
+	var (
+		users UsersGetResp
+		err   error
+	)
+	users.response, err = c.securityClient.do(ctx, req, &users.Users)
 	if err != nil {
-		return nil, err
+		return &users, err
 	}
 	return &users, nil
 }
 
 func (c usersClient) Delete(ctx context.Context, req *UsersDeleteReq) (*UsersDeleteResp, error) {
-	var users UsersDeleteResp
-	_, err := c.securityClient.do(ctx, req, &users)
+	var (
+		users UsersDeleteResp
+		err   error
+	)
+	users.response, err = c.securityClient.do(ctx, req, &users)
 	if err != nil {
-		return nil, err
+		return &users, err
 	}
 	return &users, nil
 }

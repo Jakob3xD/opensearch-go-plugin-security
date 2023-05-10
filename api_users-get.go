@@ -25,6 +25,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/jakob3xd/opensearch-golang"
 )
 
 type UsersGetReq struct {
@@ -52,7 +54,10 @@ func (r UsersGetReq) GetHeader() http.Header {
 	return r.Header
 }
 
-type UsersGetResp map[string]UserGetResp
+type UsersGetResp struct {
+	Users    map[string]UserGetResp
+	response *opensearch.Response
+}
 
 type UserGetResp struct {
 	Reserved                bool              `json:"reserved"`
@@ -61,4 +66,8 @@ type UserGetResp struct {
 	Attributes              map[string]string `json:"attributes"`
 	OpensearchSecurityRoles []string          `json:"opendistro_security_roles"`
 	Static                  bool              `json:"static"`
+}
+
+func (r UsersGetResp) Inspect() *opensearch.Inspect {
+	return &opensearch.Inspect{Response: r.response}
 }

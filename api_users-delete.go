@@ -25,6 +25,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/jakob3xd/opensearch-golang"
 )
 
 type UsersDeleteReq struct {
@@ -53,6 +55,11 @@ func (r UsersDeleteReq) GetHeader() http.Header {
 }
 
 type UsersDeleteResp struct {
-	Status  string `json:"status"`
-	Message string `json:"message"`
+	Status   string `json:"status"`
+	Message  string `json:"message"`
+	response *opensearch.Response
+}
+
+func (r UsersDeleteResp) Inspect() *opensearch.Inspect {
+	return &opensearch.Inspect{Response: r.response}
 }
