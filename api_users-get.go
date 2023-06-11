@@ -23,10 +23,10 @@ package security
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/jakob3xd/opensearch-golang"
+	"github.com/jakob3xd/opensearch-golang/opensearchutil"
 )
 
 type UsersGetReq struct {
@@ -34,24 +34,14 @@ type UsersGetReq struct {
 	Header http.Header
 }
 
-func (r UsersGetReq) GetMethod() string {
-	return "GET"
-}
-
-func (r UsersGetReq) GetPath() string {
-	return fmt.Sprintf("%s%s%s", basePath, "api/internalusers/", r.User)
-}
-
-func (r UsersGetReq) GetBody() (io.Reader, error) {
-	return nil, nil
-}
-
-func (r UsersGetReq) GetParams() map[string]string {
-	return nil
-}
-
-func (r UsersGetReq) GetHeader() http.Header {
-	return r.Header
+func (r UsersGetReq) GetRequest() (*http.Request, error) {
+	return opensearchutil.BuildRequest(
+		"GET",
+		fmt.Sprintf("%s%s%s", basePath, "api/internalusers/", r.User),
+		nil,
+		nil,
+		r.Header,
+	)
 }
 
 type UsersGetResp struct {

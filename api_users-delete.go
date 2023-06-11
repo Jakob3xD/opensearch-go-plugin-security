@@ -23,10 +23,10 @@ package security
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/jakob3xd/opensearch-golang"
+	"github.com/jakob3xd/opensearch-golang/opensearchutil"
 )
 
 type UsersDeleteReq struct {
@@ -34,24 +34,14 @@ type UsersDeleteReq struct {
 	Header http.Header
 }
 
-func (r UsersDeleteReq) GetMethod() string {
-	return "DELETE"
-}
-
-func (r UsersDeleteReq) GetPath() string {
-	return fmt.Sprintf("%s%s%s", basePath, "api/internalusers/", r.User)
-}
-
-func (r UsersDeleteReq) GetBody() (io.Reader, error) {
-	return nil, nil
-}
-
-func (r UsersDeleteReq) GetParams() map[string]string {
-	return nil
-}
-
-func (r UsersDeleteReq) GetHeader() http.Header {
-	return r.Header
+func (r UsersDeleteReq) GetRequest() (*http.Request, error) {
+	return opensearchutil.BuildRequest(
+		"DELETE",
+		fmt.Sprintf("%s%s%s", basePath, "api/internalusers/", r.User),
+		nil,
+		nil,
+		r.Header,
+	)
 }
 
 type UsersDeleteResp struct {
